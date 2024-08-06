@@ -1,5 +1,6 @@
 #include <MiniFB.h>
 #include <stdio.h>
+#include "svpng.h"
 
 #include "../window.h"
 #include "../runtime.h"
@@ -95,9 +96,17 @@ void w4_windowBoot (const char* title) {
     } while (mfb_wait_sync(window));
 }
 
+int counter = 0;
+
 void w4_windowComposite (const uint32_t* palette, const uint8_t* framebuffer) {
     // Convert indexed 2bpp framebuffer to XRGB output
     uint32_t* out = pixels;
+    char filename[32];
+    sprintf(filename, "out/frame_%03d.png", counter++);
+    FILE *fp = fopen(filename, "wb");
+    unsigned char rgb[160 * 160 * 3], *p = rgb;
+    unsigned x = 0;
+    unsigned y = 0;
     for (int n = 0; n < 160*160/4; ++n) {
         uint8_t quartet = framebuffer[n];
         int color1 = (quartet & 0b00000011) >> 0;
@@ -109,5 +118,23 @@ void w4_windowComposite (const uint32_t* palette, const uint8_t* framebuffer) {
         *out++ = palette[color2];
         *out++ = palette[color3];
         *out++ = palette[color4];
+
+        *p++ = (unsigned char)((palette[color1] & 0xff0000) >> 16);
+        *p++ = (unsigned char)((palette[color1] & 0xff00) >> 8);
+        *p++ = (unsigned char)(palette[color1] & 0xff);
+
+        *p++ = (unsigned char)((palette[color2] & 0xff0000) >> 16);
+        *p++ = (unsigned char)((palette[color2] & 0xff00) >> 8);
+        *p++ = (unsigned char)(palette[color2] & 0xff);
+
+        *p++ = (unsigned char)((palette[color3] & 0xff0000) >> 16);
+        *p++ = (unsigned char)((palette[color3] & 0xff00) >> 8);
+        *p++ = (unsigned char)(palette[color3] & 0xff);
+
+        *p++ = (unsigned char)((palette[color4] & 0xff0000) >> 16);
+        *p++ = (unsigned char)((palette[color4] & 0xff00) >> 8);
+        *p++ = (unsigned char)(palette[color4] & 0xff);
     }
+    svpng(fp, 160, 160, rgb, 0);
+    fclose(fp);
 }

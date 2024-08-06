@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <cubeb/cubeb.h>
-
 #include "../apu.h"
 #include "../runtime.h"
 #include "../wasm.h"
@@ -26,61 +24,6 @@ typedef struct {
     // Length of the cart.wasm bytes used to offset backwards from the footer
     uint32_t cartLength;
 } FileFooter;
-
-static long audioDataCallback (cubeb_stream* stream, void* userData,
-    const void* inputBuffer, void* outputBuffer, long frames)
-{
-    w4_apuWriteSamples((int16_t*)outputBuffer, frames);
-    return frames;
-}
-
-static void audioStateCallback (cubeb_stream* stream, void* userData, cubeb_state state) {
-}
-
-static void audioInit () {
-    cubeb* ctx;
-
-#if defined(_WIN32)
-    // This initialziation is required for cubeb on windows
-    // It's safe to ignore the return value of this, as there's no real failure mode
-    CoInitializeEx(NULL, COINIT_MULTITHREADED | COINIT_DISABLE_OLE1DDE);
-#endif
-    if (cubeb_init(&ctx, "WASM-4", NULL)) {
-        fprintf(stderr, "Could not init audio\n");
-        return;
-    }
-
-    cubeb_stream_params params;
-    params.format = CUBEB_SAMPLE_S16NE;
-    params.rate = 44100;
-    params.channels = 2;
-    params.layout = CUBEB_LAYOUT_UNDEFINED;
-    params.prefs = CUBEB_STREAM_PREF_NONE;
-
-    uint32_t latency;
-    if (cubeb_get_min_latency(ctx, &params, &latency)) {
-        fprintf(stderr, "Could not get minimum latency\n");
-        return;
-    }
-
-    cubeb_stream* stream;
-    if (cubeb_stream_init(ctx, &stream, "WASM-4", NULL, NULL, NULL, &params,
-            latency, audioDataCallback, audioStateCallback, NULL)) {
-        fprintf(stderr, "Could not open the stream\n");
-        return;
-    }
-
-    if (cubeb_stream_start(stream)) {
-        fprintf(stderr, "Could not start the stream\n");
-        return;
-    }
-}
-
-static void audioUninit () {
-#if defined(_WIN32)
-    CoUninitialize();
-#endif
-}
 
 static void loadDiskFile (w4_Disk* disk, const char *diskPath) {
     FILE *file = fopen(diskPath, "rb");
@@ -201,16 +144,12 @@ int main (int argc, const char* argv[]) {
         loadDiskFile(&disk, diskPath);
     }
 
-    audioInit();
-
     uint8_t* memory = w4_wasmInit();
     w4_runtimeInit(memory, &disk);
 
     w4_wasmLoadModule(cartBytes, cartLength);
 
     w4_windowBoot(title);
-
-    audioUninit();
 
     saveDiskFile(&disk, diskPath);
 }
