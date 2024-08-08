@@ -6,7 +6,7 @@
 #include "apu.h"
 #include "framebuffer.h"
 #include "util.h"
-#include "wasm.h"
+#include "wasm0.h"
 #include "window.h"
 
 #define WIDTH 160

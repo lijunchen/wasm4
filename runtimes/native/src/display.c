@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include "svpng.h"
 
-#include "../window.h"
-#include "../runtime.h"
+#include "window.h"
+#include "runtime.h"
 
 static uint32_t pixels[160*160];
 

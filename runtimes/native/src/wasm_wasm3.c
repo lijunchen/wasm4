@@ -1,8 +1,8 @@
 #include <wasm3.h>
 #include <m3_env.h>
 
-#include "../wasm.h"
-#include "../runtime.h"
+#include "wasm0.h"
+#include "runtime.h"
 
 static M3Environment* env;
 static M3Runtime* runtime;

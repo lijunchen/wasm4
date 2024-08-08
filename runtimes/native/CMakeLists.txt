@@ -30,9 +30,9 @@ file(GLOB M3_SOURCES RELATIVE "${CMAKE_SOURCE_DIR}" "vendor/wasm3/source/*.c")
 
 
 set(DISPLAY_SOURCES
-    src/backend/main.c
-    src/backend/wasm_wasm3.c
-    src/backend/display.c
+    src/main.c
+    src/wasm_wasm3.c
+    src/display.c
 )
 add_executable(wasm4 ${COMMON_SOURCES} ${DISPLAY_SOURCES} ${M3_SOURCES})
 

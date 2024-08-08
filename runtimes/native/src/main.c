@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../apu.h"
-#include "../runtime.h"
-#include "../wasm.h"
-#include "../window.h"
-#include "../util.h"
+#include "apu.h"
+#include "runtime.h"
+#include "wasm0.h"
+#include "window.h"
+#include "util.h"
 
 #if defined(_WIN32)
 #include <windows.h>
