@@ -29,12 +29,7 @@ file(GLOB COMMON_SOURCES RELATIVE "${CMAKE_SOURCE_DIR}" "src/*.c")
 file(GLOB M3_SOURCES RELATIVE "${CMAKE_SOURCE_DIR}" "vendor/wasm3/source/*.c")
 
 
-set(DISPLAY_SOURCES
-    src/main.c
-    src/wasm_wasm3.c
-    src/display.c
-)
-add_executable(wasm4 ${COMMON_SOURCES} ${DISPLAY_SOURCES} ${M3_SOURCES})
+add_executable(wasm4 ${COMMON_SOURCES} ${M3_SOURCES})
 
 target_include_directories(wasm4 PRIVATE "${CMAKE_SOURCE_DIR}/vendor/wasm3/source")
 set_target_properties(wasm4 PROPERTIES C_STANDARD 99)
