@@ -10,14 +10,6 @@ static int viewportX = 0;
 static int viewportY = 0;
 static int viewportSize = 3*160;
 
-static void onResize (struct mfb_window* window, int width, int height) {
-    viewportSize = (width < height) ? width : height;
-    viewportX = width/2 - viewportSize/2;
-    viewportY = height/2 - viewportSize/2;
-
-    mfb_set_viewport(window, viewportX, viewportY, viewportSize, viewportSize);
-}
-
 void w4_windowBoot (const char* title) {
     do {
 
@@ -31,8 +23,8 @@ void w4_windowBoot (const char* title) {
 
         // Mouse handling
         uint8_t mouseButtons = 0;
-        int mouseX = mfb_get_mouse_x(0);
-        int mouseY = mfb_get_mouse_y(0);
+        int mouseX = 0;
+        int mouseY = 0;
         w4_runtimeSetMouse(160*(mouseX-viewportX)/viewportSize, 160*(mouseY-viewportY)/viewportSize, mouseButtons);
 
         w4_runtimeUpdate();
